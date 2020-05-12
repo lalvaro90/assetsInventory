@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\RealStateApi\\AssetsApi\\AssetsApi.csproj": {}
+    "D:\\AssetApp\\assetsInventory\\AssetsApi\\AssetsApi.csproj": {}
   },
   "projects": {
-    "D:\\RealStateApi\\AssetsApi\\AssetsApi.csproj": {
+    "D:\\AssetApp\\assetsInventory\\AssetsApi\\AssetsApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\RealStateApi\\AssetsApi\\AssetsApi.csproj",
+        "projectUniqueName": "D:\\AssetApp\\assetsInventory\\AssetsApi\\AssetsApi.csproj",
         "projectName": "AssetsApi",
-        "projectPath": "D:\\RealStateApi\\AssetsApi\\AssetsApi.csproj",
+        "projectPath": "D:\\AssetApp\\assetsInventory\\AssetsApi\\AssetsApi.csproj",
         "packagesPath": "C:\\Users\\ff_luism\\.nuget\\packages\\",
-        "outputPath": "D:\\RealStateApi\\AssetsApi\\obj\\",
+        "outputPath": "D:\\AssetApp\\assetsInventory\\AssetsApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ff_luism\\AppData\\Roaming\\NuGet\\NuGet.Config",

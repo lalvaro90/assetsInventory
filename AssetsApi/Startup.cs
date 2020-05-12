@@ -77,7 +77,7 @@ namespace AssetsApi
                             await httpContext.Response.WriteAsync("Unautorized Request");
                         }
                     }
-                    else if (httpContext.Request.Path.Value.Contains("users/0") && httpContext.Request.Method == HttpMethods.Post)
+                    else if (httpContext.Request.Path.Value.Contains("users") && httpContext.Request.Method == HttpMethods.Post)
                     {
                         await next.Invoke();
                     }
@@ -88,7 +88,7 @@ namespace AssetsApi
                     }
 
                 }
-                else if (httpContext.Request.Path.Value.Contains("users/0") && httpContext.Request.Method == HttpMethods.Post)
+                else if (httpContext.Request.Path.Value.Contains("users") && httpContext.Request.Method == HttpMethods.Post)
                 {
                     await next.Invoke();
                 }

@@ -47,7 +47,7 @@ namespace AssetsApi.Controllers
         //Logs in the User
         [HttpPost("{id}")]
         public ActionResult<User> Login(long id, User user) {
-            var _user = _context.Users.FirstOrDefault(x => x.Email == user.Email && x.Password == user.Password);
+            var _user = _context.Users.FirstOrDefault(x => x.Email == user.Email && x.Password == user.Password && x.IsActive);
             var ip = Request.HttpContext.Connection.RemoteIpAddress.ToString();
             var client = Request.Headers["User-Agent"].ToString();
             if (_user != null)
@@ -103,6 +103,7 @@ namespace AssetsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
+            user.IsActive = true;
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
