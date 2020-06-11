@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AssetsApi.Models;
+using Microsoft.AspNetCore.Cors;
 
 namespace AssetsApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
+    [EnableCors("Allow")]
     public class DepreciationController : ControllerBase
     {
         private readonly AssetsContext _context;
@@ -48,10 +50,16 @@ namespace AssetsApi.Controllers
             var depreciation = await _context.Depreciations.FindAsync(id);
             var _assets = _context.Assets.Where(x => x.Depreciation.Id == id);
             string oldDetails, newDetails;
+
+            if (depreciation == null)
+            {
+                return NotFound();
+            }
+
             foreach (var a in _assets) {
-                var _newPrice = a.Price - (a.Price * depreciation.Percentage);
+                var _newPrice = a.CurrentPrice - (a.CurrentPrice * depreciation.Percentage);
                 oldDetails = a.ToString();
-                a.Price = _newPrice;
+                a.CurrentPrice = _newPrice;
                 newDetails = a.ToString();
                 if (!project) {
                     _context.AssetsHistory.Add(new AssetHistory() { AssetID=a.Id, NewDetails = newDetails, PreviewsDetails = oldDetails, UpdateDate = DateTime.Now });
@@ -59,11 +67,6 @@ namespace AssetsApi.Controllers
             }
             if (!project) {
                 await _context.SaveChangesAsync();
-            }
-
-            if (depreciation == null)
-            {
-                return NotFound();
             }
 
             return _assets.ToList();

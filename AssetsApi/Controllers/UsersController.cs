@@ -59,10 +59,20 @@ namespace AssetsApi.Controllers
                 _context.SaveChanges();
                 _user.Token = token.Content;
                 return _user;
+                deleteInactiveTokens();
             }
             else {
                 return new UnauthorizedResult();
             }
+        }
+
+        private async Task<List<Token>> deleteInactiveTokens() {
+            var tokens = _context.Tokens.Where(x => x.Expire < DateTime.Now.AddMinutes(-30));
+            foreach (var token in tokens) {
+                _context.Tokens.Remove(token);
+            }
+            _context.SaveChanges();
+            return await tokens.ToListAsync();
         }
 
         // PUT: api/Users/5

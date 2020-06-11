@@ -424,10 +424,11 @@ D:\AssetApp\assetsInventory\AssetsApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\n
 D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.csprojAssemblyReference.cache
 D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\staticwebassets\AssetsApi.StaticWebAssets.Manifest.cache
 D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\staticwebassets\AssetsApi.StaticWebAssets.xml
-D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.MvcApplicationPartsAssemblyInfo.cache
 D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.AssemblyInfoInputs.cache
 D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.AssemblyInfo.cs
 D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.RazorTargetAssemblyInfo.cache
 D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.csproj.CopyComplete
 D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.dll
 D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.pdb
+D:\AssetApp\assetsInventory\AssetsApi\bin\Debug\netcoreapp3.1\PagedList.dll
+D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.MvcApplicationPartsAssemblyInfo.cache

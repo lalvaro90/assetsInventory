@@ -19,6 +19,27 @@ namespace AssetsApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("AssetsApi.Models.AcquisitionMethod", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Desription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("AcquisitionMethods");
+                });
+
             modelBuilder.Entity("AssetsApi.Models.Asset", b =>
                 {
                     b.Property<long>("Id")
@@ -26,12 +47,18 @@ namespace AssetsApi.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("AcquisitionMethodID")
+                        .HasColumnType("int");
+
                     b.Property<string>("AssetId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Brand")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("CurrentPrice")
+                        .HasColumnType("float");
 
                     b.Property<int?>("DepreciationId")
                         .HasColumnType("int");
@@ -42,20 +69,23 @@ namespace AssetsApi.Migrations
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("LocationID")
+                        .HasColumnType("int");
 
                     b.Property<string>("Model")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Price")
+                    b.Property<double>("PurchasePrice")
                         .HasColumnType("float");
+
+                    b.Property<int?>("ResponsibleID")
+                        .HasColumnType("int");
 
                     b.Property<string>("Series")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("State")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("StateID")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -64,7 +94,15 @@ namespace AssetsApi.Migrations
 
                     b.HasAlternateKey("AssetId");
 
+                    b.HasIndex("AcquisitionMethodID");
+
                     b.HasIndex("DepreciationId");
+
+                    b.HasIndex("LocationID");
+
+                    b.HasIndex("ResponsibleID");
+
+                    b.HasIndex("StateID");
 
                     b.ToTable("Assets");
                 });
@@ -75,6 +113,9 @@ namespace AssetsApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Action")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("AssetID")
                         .HasColumnType("bigint");
@@ -145,6 +186,78 @@ namespace AssetsApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Depreciations");
+                });
+
+            modelBuilder.Entity("AssetsApi.Models.Location", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Details")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Locations");
+                });
+
+            modelBuilder.Entity("AssetsApi.Models.Person", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NationalId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasAlternateKey("Email");
+
+                    b.ToTable("Persons");
+                });
+
+            modelBuilder.Entity("AssetsApi.Models.States", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("States");
                 });
 
             modelBuilder.Entity("AssetsApi.Models.Token", b =>
@@ -227,9 +340,25 @@ namespace AssetsApi.Migrations
 
             modelBuilder.Entity("AssetsApi.Models.Asset", b =>
                 {
+                    b.HasOne("AssetsApi.Models.AcquisitionMethod", "AcquisitionMethod")
+                        .WithMany()
+                        .HasForeignKey("AcquisitionMethodID");
+
                     b.HasOne("AssetsApi.Models.Depreciation", "Depreciation")
                         .WithMany()
                         .HasForeignKey("DepreciationId");
+
+                    b.HasOne("AssetsApi.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationID");
+
+                    b.HasOne("AssetsApi.Models.Person", "Responsible")
+                        .WithMany()
+                        .HasForeignKey("ResponsibleID");
+
+                    b.HasOne("AssetsApi.Models.States", "State")
+                        .WithMany()
+                        .HasForeignKey("StateID");
                 });
 #pragma warning restore 612, 618
         }

@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AssetsApi.Models;
 using Microsoft.AspNetCore.Cors;
+using PagedList;
 
 namespace AssetsApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     [EnableCors("Allow")]
     public class AssetsController : ControllerBase
@@ -19,7 +20,7 @@ namespace AssetsApi.Controllers
 
         public AssetsController(AssetsContext context)
         {
-            _context = context;
+            _context = new AssetsContext(new DbContextOptions<AssetsContext>()) ;
         }
 
         // GET: api/Assets
@@ -27,6 +28,14 @@ namespace AssetsApi.Controllers
         public async Task<ActionResult<IEnumerable<Asset>>> GetAssets()
         {
             return await _context.Assets.ToListAsync();
+        }
+
+
+        // GET: api/Assets
+        [HttpGet("{index}/{pageSize}")]
+        public  IPagedList<Asset> GetAssets(int index, int pageSize)
+        {
+            return _context.Assets.ToPagedList(index,pageSize);
         }
 
         // GET: api/Assets/5
@@ -57,7 +66,44 @@ namespace AssetsApi.Controllers
             var _asset = await _context.Assets.FindAsync(id);
 
             _context.AssetsHistory.Add(new AssetHistory()
-            { AssetID = asset.Id, NewDetails = asset.ToString(), PreviewsDetails = _asset.ToString(), UpdateDate = DateTime.Now });
+            { AssetID = asset.Id, NewDetails = asset.ToString(), PreviewsDetails = _asset.ToString(), UpdateDate = DateTime.Now, Action = "Edit" });
+
+            _context.Entry(asset).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AssetExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // PUT: api/Assets/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPut("transfer/{id}")]
+        public async Task<IActionResult> Transfer(long id, Asset asset)
+        {
+            if (id != asset.Id)
+            {
+                return BadRequest();
+            }
+
+            var _asset = await _context.Assets.FindAsync(id);
+
+            _context.AssetsHistory.Add(new AssetHistory()
+            { AssetID = asset.Id, NewDetails = asset.ToString(), PreviewsDetails = _asset.ToString(), UpdateDate = DateTime.Now, Action = "Asset Transfer" });
 
             _context.Entry(asset).State = EntityState.Modified;
 
@@ -90,7 +136,7 @@ namespace AssetsApi.Controllers
             await _context.SaveChangesAsync();
 
             _context.AssetsHistory.Add(new AssetHistory()
-            { AssetID = asset.Id, NewDetails = asset.ToString(), PreviewsDetails = "Asset Creation", UpdateDate = DateTime.Now });
+            { AssetID = asset.Id, NewDetails = asset.ToString(), PreviewsDetails = "Asset Creation", UpdateDate = DateTime.Now , Action = "Asset Creation"});
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetAsset", new { id = asset.Id }, asset);
         }
@@ -105,11 +151,11 @@ namespace AssetsApi.Controllers
                 return NotFound();
             }
 
-            _context.Assets.Remove(asset);
+            asset.Status = 0;
             await _context.SaveChangesAsync();
 
             _context.AssetsHistory.Add(new AssetHistory()
-            { AssetID = asset.Id, NewDetails = asset.ToString(), PreviewsDetails = "Asset Removal", UpdateDate = DateTime.Now });
+            { AssetID = asset.Id, NewDetails = asset.ToString(), PreviewsDetails = "Asset Removal", UpdateDate = DateTime.Now, Action = "Asset Removal"});
             await _context.SaveChangesAsync();
 
             return asset;

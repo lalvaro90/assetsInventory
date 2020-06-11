@@ -14,10 +14,18 @@ namespace AssetsApi.Models
         public string Brand { get; set; }
         public string Model { get; set; }
         public string Series { get; set; }
-        public string State { get; set; }
-        public string Location { get; set; }
-        public double Price { get; set; }
+        public States State { get; set; }
+        public Location Location { get; set; }
+        public double PurchasePrice { get; set; }
+        public double CurrentPrice { get; set; }
+        public AcquisitionMethod AcquisitionMethod { get; set; }
         public Depreciation Depreciation { get; set; }
+        public Person Responsible { get; set; }
+        public int Tomo { get; set; }
+        public int Folio { get; set; }
+        public int Assiento { get; set; }
+
+
 
         //Admin Properties
         public int Status { get; set; }
