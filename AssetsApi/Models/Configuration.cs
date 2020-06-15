@@ -7,6 +7,7 @@ namespace AssetsApi.Models
 {
     public class Configuration
     {
+        public int IdConfig { get; set; }
         public string IdPrefix { get; set; }
         public string Currency { get; set; }
         public string InstitutionLogo { get; set; }

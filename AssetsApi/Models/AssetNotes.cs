@@ -8,7 +8,7 @@ namespace AssetsApi.Models
     public class AssetNotes
     {
         public long IdNote { get; set; }
-        public long AssetId { get; set; }
+        public Asset Asset { get; set; }
         public string Note { get; set; }
         public string Image { get; set; }
     }

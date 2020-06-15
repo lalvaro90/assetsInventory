@@ -26,7 +26,7 @@ namespace AssetsApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AcquisitionMethod>>> GetAcquisitionMethods()
         {
-            return await _context.AcquisitionMethods.ToListAsync();
+            return await _context.AcquisitionMethods.Where(x=> x.Status == 1).ToListAsync();
         }
 
         // GET: api/AcquisitionMethods/5
@@ -81,6 +81,7 @@ namespace AssetsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<AcquisitionMethod>> PostAcquisitionMethod(AcquisitionMethod acquisitionMethod)
         {
+            acquisitionMethod.Status = 1; //active
             _context.AcquisitionMethods.Add(acquisitionMethod);
             await _context.SaveChangesAsync();
 

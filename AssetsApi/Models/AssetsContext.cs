@@ -22,6 +22,8 @@ namespace AssetsApi.Models
         public DbSet<Location> Locations { get; set; }
         public DbSet<States> States { get; set; }
         public DbSet<AcquisitionMethod>  AcquisitionMethods { get; set; }
+        public DbSet<Configuration> Configuration { get; set; }
+        public DbSet<AssetNotes> AssetNotes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -64,6 +66,11 @@ namespace AssetsApi.Models
                 entity.HasKey(e => e.ID);
             });
 
+            modelBuilder.Entity<AssetNotes>(entity => {
+                entity.HasKey(e => e.IdNote);
+                entity.HasOne(e => e.Asset);
+            });
+
             modelBuilder.Entity<Asset>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -73,6 +80,7 @@ namespace AssetsApi.Models
                 entity.HasOne(e => e.State);
                 entity.HasOne(e => e.Responsible);
                 entity.HasOne(e => e.Location);
+                entity.HasMany(e => e.Notes);
             });
 
             modelBuilder.Entity<AssetHistory>(entity =>
@@ -82,6 +90,10 @@ namespace AssetsApi.Models
 
             modelBuilder.Entity<Depreciation>(entity => {
                 entity.HasKey(e => e.Id);
+            });
+
+            modelBuilder.Entity<Configuration>(entity => {
+                entity.HasKey(e => e.IdConfig);
             });
         }
 

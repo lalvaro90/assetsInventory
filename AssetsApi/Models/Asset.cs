@@ -21,6 +21,7 @@ namespace AssetsApi.Models
         public AcquisitionMethod AcquisitionMethod { get; set; }
         public Depreciation Depreciation { get; set; }
         public Person Responsible { get; set; }
+        public List<AssetNotes> Notes { get; set; }
         public int Tomo { get; set; }
         public int Folio { get; set; }
         public int Assiento { get; set; }
@@ -36,7 +37,8 @@ namespace AssetsApi.Models
             var props = typeof(Asset).GetProperties();
             StringBuilder sb = new StringBuilder();
 
-            foreach (var prop in props) {
+            foreach (var prop in props)
+            {
                 sb.AppendLine(string.Format("{0}: {1}", prop.Name, prop.GetValue(this)));
             }
 

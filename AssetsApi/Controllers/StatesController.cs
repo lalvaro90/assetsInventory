@@ -26,7 +26,7 @@ namespace AssetsApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<States>>> GetStates()
         {
-            return await _context.States.ToListAsync();
+            return await _context.States.Where(x=> x.Status == 1).ToListAsync();
         }
 
         // GET: api/States/5
@@ -81,6 +81,7 @@ namespace AssetsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<States>> PostStates(States states)
         {
+            states.Status = 1; //Active;
             _context.States.Add(states);
             await _context.SaveChangesAsync();
 

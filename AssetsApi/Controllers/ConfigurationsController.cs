@@ -13,48 +13,48 @@ namespace AssetsApi.Controllers
     [Route("[controller]")]
     [ApiController]
     [EnableCors("Allow")]
-    public class PeopleController : ControllerBase
+    public class ConfigurationsController : ControllerBase
     {
         private readonly AssetsContext _context;
 
-        public PeopleController(AssetsContext context)
+        public ConfigurationsController(AssetsContext context)
         {
             _context = context;
         }
 
-        // GET: api/People
+        // GET: api/Configurations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Person>>> GetPersons()
+        public async Task<ActionResult<IEnumerable<Configuration>>> GetConfiguration()
         {
-            return await _context.Persons.Where(x=> x.Status == 1).ToListAsync();
+            return await _context.Configuration.ToListAsync();
         }
 
-        // GET: api/People/5
+        // GET: api/Configurations/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Person>> GetPerson(int id)
+        public async Task<ActionResult<Configuration>> GetConfiguration(int id)
         {
-            var person = await _context.Persons.FindAsync(id);
+            var configuration = await _context.Configuration.FindAsync(id);
 
-            if (person == null)
+            if (configuration == null)
             {
                 return NotFound();
             }
 
-            return person;
+            return configuration;
         }
 
-        // PUT: api/People/5
+        // PUT: api/Configurations/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPerson(int id, Person person)
+        public async Task<IActionResult> PutConfiguration(int id, Configuration configuration)
         {
-            if (id != person.ID)
+            if (id != configuration.IdConfig)
             {
                 return BadRequest();
             }
 
-            _context.Entry(person).State = EntityState.Modified;
+            _context.Entry(configuration).State = EntityState.Modified;
 
             try
             {
@@ -62,7 +62,7 @@ namespace AssetsApi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PersonExists(id))
+                if (!ConfigurationExists(id))
                 {
                     return NotFound();
                 }
@@ -75,38 +75,37 @@ namespace AssetsApi.Controllers
             return NoContent();
         }
 
-        // POST: api/People
+        // POST: api/Configurations
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Person>> PostPerson(Person person)
+        public async Task<ActionResult<Configuration>> PostConfiguration(Configuration configuration)
         {
-            person.Status = 1;
-            _context.Persons.Add(person);
+            _context.Configuration.Add(configuration);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPerson", new { id = person.ID }, person);
+            return CreatedAtAction("GetConfiguration", new { id = configuration.IdConfig }, configuration);
         }
 
-        // DELETE: api/People/5
+        // DELETE: api/Configurations/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Person>> DeletePerson(int id)
+        public async Task<ActionResult<Configuration>> DeleteConfiguration(int id)
         {
-            var person = await _context.Persons.FindAsync(id);
-            if (person == null)
+            var configuration = await _context.Configuration.FindAsync(id);
+            if (configuration == null)
             {
                 return NotFound();
             }
 
-            _context.Persons.Remove(person);
+            _context.Configuration.Remove(configuration);
             await _context.SaveChangesAsync();
 
-            return person;
+            return configuration;
         }
 
-        private bool PersonExists(int id)
+        private bool ConfigurationExists(int id)
         {
-            return _context.Persons.Any(e => e.ID == id);
+            return _context.Configuration.Any(e => e.IdConfig == id);
         }
     }
 }

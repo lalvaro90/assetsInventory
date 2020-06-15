@@ -26,7 +26,7 @@ namespace AssetsApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Location>>> GetLocations()
         {
-            return await _context.Locations.ToListAsync();
+            return await _context.Locations.Where(x=> x.Status == 1).ToListAsync();
         }
 
         // GET: api/Locations/5
@@ -81,6 +81,7 @@ namespace AssetsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Location>> PostLocation(Location location)
         {
+            location.Status = 1; //Active;
             _context.Locations.Add(location);
             await _context.SaveChangesAsync();
 

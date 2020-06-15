@@ -69,6 +69,8 @@ namespace AssetsApi
 
                         if (tk.Expire > DateTime.Now)
                         {
+                            tk.Expire.AddMinutes(15);
+                            await context.SaveChangesAsync();
                             await next.Invoke();
                         }
                         else

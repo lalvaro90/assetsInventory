@@ -15,6 +15,7 @@ namespace AssetsApi.Models
         public string Email { get; set; }
         public string Phone { get; set; }
         public string NationalId { get; set; }
+        public int Status { get; set; }
 
         public override string ToString()
         {
