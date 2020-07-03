@@ -19,7 +19,7 @@ namespace AssetsApi.Models
 
         public override string ToString()
         {
-            var props = typeof(Asset).GetProperties();
+            var props = typeof(Person).GetProperties();
             StringBuilder sb = new StringBuilder();
 
             foreach (var prop in props)

@@ -24,6 +24,7 @@ namespace AssetsApi.Models
         public DbSet<AcquisitionMethod>  AcquisitionMethods { get; set; }
         public DbSet<Configuration> Configuration { get; set; }
         public DbSet<AssetNotes> AssetNotes { get; set; }
+        public DbSet<Provider> Providers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -61,9 +62,15 @@ namespace AssetsApi.Models
                 entity.HasKey(e => e.ID);
             });
 
+            modelBuilder.Entity<Provider>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+            });
+
             modelBuilder.Entity<AcquisitionMethod>(entity =>
             {
                 entity.HasKey(e => e.ID);
+                entity.HasIndex(e => e.ID);
             });
 
             modelBuilder.Entity<AssetNotes>(entity => {
@@ -81,6 +88,7 @@ namespace AssetsApi.Models
                 entity.HasOne(e => e.Responsible);
                 entity.HasOne(e => e.Location);
                 entity.HasMany(e => e.Notes);
+                entity.HasOne(e => e.Provider);
             });
 
             modelBuilder.Entity<AssetHistory>(entity =>

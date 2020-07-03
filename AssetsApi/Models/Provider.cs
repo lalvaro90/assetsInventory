@@ -6,22 +6,20 @@ using System.Threading.Tasks;
 
 namespace AssetsApi.Models
 {
-    public class States
+    public class Provider
     {
-        public int ID { get; set; }
+        public long ID { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-        public int Status { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
         public override string ToString()
         {
-            var props = typeof(States).GetProperties();
+            var props = typeof(Provider).GetProperties();
             StringBuilder sb = new StringBuilder();
 
             foreach (var prop in props)
             {
-                var val = Convert.ChangeType(prop.GetValue(this), prop.PropertyType);
-
-                sb.AppendLine(string.Format("{0}: {1}", prop.Name, prop.GetValue(this,null)));
+                sb.AppendLine(string.Format("{0}: {1}", prop.Name, prop.GetValue(this)));
             }
 
             return sb.ToString();

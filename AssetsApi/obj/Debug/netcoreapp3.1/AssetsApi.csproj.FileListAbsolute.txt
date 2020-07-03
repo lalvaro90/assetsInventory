@@ -431,4 +431,8 @@ D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.csproj.C
 D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.dll
 D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.pdb
 D:\AssetApp\assetsInventory\AssetsApi\bin\Debug\netcoreapp3.1\PagedList.dll
+D:\AssetApp\assetsInventory\AssetsApi\bin\Debug\netcoreapp3.1\System.Collections.Immutable.dll
+D:\AssetApp\assetsInventory\AssetsApi\bin\Debug\netcoreapp3.1\System.Diagnostics.DiagnosticSource.dll
 D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.MvcApplicationPartsAssemblyInfo.cache
+D:\AssetApp\assetsInventory\AssetsApi\bin\Debug\netcoreapp3.1\DocumentFormat.OpenXml.dll
+D:\AssetApp\assetsInventory\AssetsApi\bin\Debug\netcoreapp3.1\System.IO.Packaging.dll

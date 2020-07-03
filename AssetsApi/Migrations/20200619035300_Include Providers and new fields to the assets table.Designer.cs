@@ -4,14 +4,16 @@ using AssetsApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AssetsApi.Migrations
 {
     [DbContext(typeof(AssetsContext))]
-    partial class AssetsContextModelSnapshot : ModelSnapshot
+    [Migration("20200619035300_Include Providers and new fields to the assets table")]
+    partial class IncludeProvidersandnewfieldstotheassetstable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

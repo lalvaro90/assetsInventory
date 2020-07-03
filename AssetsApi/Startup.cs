@@ -94,6 +94,9 @@ namespace AssetsApi
                 {
                     await next.Invoke();
                 }
+                else if (httpContext.Request.Path.Value.Contains("export") && httpContext.Request.Method == HttpMethods.Get) {
+                    await next.Invoke();
+                }
                 else
                 {
                     httpContext.Response.StatusCode = 401;

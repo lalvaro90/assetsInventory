@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace AssetsApi.Models
 {
     public class Asset
     {
+        [Key]
         public long Id { get; set; }
         public string AssetId { get; set; }
         public string Description { get; set; }
@@ -22,6 +24,10 @@ namespace AssetsApi.Models
         public Depreciation Depreciation { get; set; }
         public Person Responsible { get; set; }
         public List<AssetNotes> Notes { get; set; }
+        public string InvoiceNumber { get; set; }
+        public DateTime AcquisitionDate { get; set; }
+        public Provider Provider { get; set; }
+
         public int Tomo { get; set; }
         public int Folio { get; set; }
         public int Assiento { get; set; }
@@ -36,10 +42,20 @@ namespace AssetsApi.Models
         {
             var props = typeof(Asset).GetProperties();
             StringBuilder sb = new StringBuilder();
-
-            foreach (var prop in props)
+            try
             {
-                sb.AppendLine(string.Format("{0}: {1}", prop.Name, prop.GetValue(this)));
+                foreach (var prop in props)
+                {
+                    var obj = Convert.ChangeType(prop.GetValue(this), prop.PropertyType);
+
+                    sb.AppendLine(string.Format("{0}: {1}", prop.Name, obj == null? "" : obj.ToString()));
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
             }
 
             return sb.ToString();
