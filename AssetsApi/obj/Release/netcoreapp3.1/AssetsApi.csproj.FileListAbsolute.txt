@@ -288,3 +288,10 @@ D:\AssetApp\assetsInventory\AssetsApi\obj\Release\netcoreapp3.1\AssetsApi.RazorT
 D:\AssetApp\assetsInventory\AssetsApi\obj\Release\netcoreapp3.1\AssetsApi.csproj.CopyComplete
 D:\AssetApp\assetsInventory\AssetsApi\obj\Release\netcoreapp3.1\AssetsApi.dll
 D:\AssetApp\assetsInventory\AssetsApi\obj\Release\netcoreapp3.1\AssetsApi.pdb
+D:\AssetApp\assetsInventory\AssetsApi\bin\Release\netcoreapp3.1\DocumentFormat.OpenXml.dll
+D:\AssetApp\assetsInventory\AssetsApi\bin\Release\netcoreapp3.1\System.Collections.Immutable.dll
+D:\AssetApp\assetsInventory\AssetsApi\bin\Release\netcoreapp3.1\System.Diagnostics.DiagnosticSource.dll
+D:\AssetApp\assetsInventory\AssetsApi\bin\Release\netcoreapp3.1\System.IO.Packaging.dll
+D:\AssetApp\assetsInventory\AssetsApi\obj\Release\netcoreapp3.1\AssetsApi.genruntimeconfig.cache
+D:\AssetApp\assetsInventory\AssetsApi\bin\Release\netcoreapp3.1\App-Code\report.xlsx
+D:\AssetApp\assetsInventory\AssetsApi\bin\Release\netcoreapp3.1\App-Code\Reporte.xlsx

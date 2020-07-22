@@ -19,11 +19,12 @@ namespace AssetsApi.Models
         public States State { get; set; }
         public Location Location { get; set; }
         public double PurchasePrice { get; set; }
+        public DateTime PurchaseDate { get; set; }
         public double CurrentPrice { get; set; }
         public AcquisitionMethod AcquisitionMethod { get; set; }
         public Depreciation Depreciation { get; set; }
         public Person Responsible { get; set; }
-        public List<AssetNotes> Notes { get; set; }
+        public Person Responsible2 { get; set; }
         public string InvoiceNumber { get; set; }
         public DateTime AcquisitionDate { get; set; }
         public Provider Provider { get; set; }

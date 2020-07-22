@@ -40,6 +40,7 @@ namespace AssetsApi.Controllers
                 .Include(x => x.AcquisitionMethod)
                 .Include(x => x.Depreciation)
                 .Include(x => x.Responsible)
+                .Include(x => x.Depreciation)
                 .Where(x => x.Status == 1)
                 .OrderBy(x => x.Location.ID)
                 .ThenBy(x => x.AssetId)
@@ -52,7 +53,9 @@ namespace AssetsApi.Controllers
             return await _context.Assets
                 .Include(x => x.Location)
                 .Include(x => x.State)
-                .Where(x => x.Location.ID == location)
+                .Include(x => x.Responsible)
+                .Include(x => x.Responsible2)
+                .Where(x => x.Location.ID == location && x.Status == 1)
                 .OrderBy(x => x.Location.Name)
                 .ThenBy(x => x.AssetId)
                 .ToListAsync();
@@ -65,7 +68,8 @@ namespace AssetsApi.Controllers
                 .Include(x => x.Location)
                 .Include(x => x.State)
                 .Include(x => x.Responsible)
-                .Where(x => x.Responsible.ID == person).OrderBy(x => x.Responsible.LastName).ToListAsync();
+                .Include(x => x.Responsible2)
+                .Where(x => (x.Responsible.ID == person || x.Responsible2.ID == person) && x.Status == 1).OrderBy(x => x.Responsible.LastName).ToListAsync();
         }
 
         // GET: api/Assets
@@ -73,6 +77,7 @@ namespace AssetsApi.Controllers
         public IPagedList<Asset> GetAssets(int index, int pageSize)
         {
             return _context.Assets
+                .Where(x =>  x.Status == 1)
                 .OrderBy(x => x.Location.ID)
                 .ThenBy(x => x.AssetId)
                 .ToPagedList(index, pageSize);
@@ -82,22 +87,23 @@ namespace AssetsApi.Controllers
         [HttpGet("export/{token}")]
         public async Task<FileContentResult> ExportMainReport(string token)
         {
+            var path = "";
             try
             {
                 var helper = new ExcelHelper();
 
                 var assets = _context.Assets
-                    .Include(x=>x.Location)
-                    .Include(x=> x.AcquisitionMethod)
-                    .Include(x=>x.State)
+                    .Include(x => x.Location)
+                    .Include(x => x.AcquisitionMethod)
+                    .Include(x => x.State)
                     .Where(x => x.Status == 1)
-                    .OrderBy(x=> x.Location)
-                    .ThenBy(x=>x.Tomo)
-                    .ThenBy(x=>x.Folio)
-                    .ThenBy(x=>x.Folio)
+                    .OrderBy(x => x.Location)
+                    .ThenBy(x => x.Tomo)
+                    .ThenBy(x => x.Folio)
+                    .ThenBy(x => x.Folio)
                     .ToList();
 
-                var path = helper.ExportData(assets);
+                path = helper.ExportData(assets);
 
                 var date = DateTime.Now.ToString().Replace('\\', '-');
 
@@ -106,38 +112,52 @@ namespace AssetsApi.Controllers
 
                 var file = System.IO.File.ReadAllBytes(path);
 
-                //var msj = new HttpResponseMessage(HttpStatusCode.OK);
-
-                //msj.Content = new StreamContent(file);
-
-                ////var result_export = Request.CreateResponse(HttpStatusCode.OK);
-                //msj.Content.Headers.ContentType = new MediaTypeHeaderValue("");
-                //msj.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
-                //{
-                //    FileName = $"Reporte de Activos {date}.xlsx"
-                //};
-
-                //return msj;
-
                 var fs = System.IO.File.OpenRead(path);
 
                 MemoryStream ms = new MemoryStream();
                 fs.CopyTo(ms);
-                
-               var b = ms.ToArray();
 
-                return new FileContentResult(b , "application/ms-excel")
+                var b = ms.ToArray();
+
+                return new FileContentResult(b, "application/ms-excel")
                 {
                     FileDownloadName = $"Reporte de Activos {date}.xlsx"
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
+            {
+                Response.WriteAsync($"Error - {ex.Message}<br>");
+                Response.WriteAsync($"Stack - {ex.StackTrace}<br>");
+                throw;
+            }
+        }
+
+        [HttpGet("depreciation")]
+        public void updateDepreciation() {
+            try
+            {
+               var assets = _context.Assets.Include(x => x.Depreciation).Where(x => x.Status == 1);
+                foreach (Asset a in assets) {
+
+                    if (!string.IsNullOrEmpty(a.Depreciation.Frequency))
+                    {
+                        if (a.CurrentPrice > 0 || a.PurchaseDate < a.PurchaseDate.AddYears(int.Parse(a.Depreciation.Frequency)))
+                        {
+                            var diff = (DateTime.Now - a.PurchaseDate).TotalDays;
+                            var daily = a.Depreciation.Percentage / 30;
+                            a.CurrentPrice = a.PurchasePrice - (a.PurchasePrice * ((daily * diff) / 100));
+                            _context.Entry(a).State = EntityState.Modified;
+                        }
+                    }
+                }
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
             {
 
                 throw;
             }
         }
-
 
         [HttpGet("pages/{pageSize}")]
         public double GetPagesCount(int pageSize)
@@ -146,7 +166,7 @@ namespace AssetsApi.Controllers
 
             int rem = 0;
 
-            pages = Math.DivRem(_context.Assets.Count(), pageSize, out rem);
+            pages = Math.DivRem(_context.Assets.Where(x => x.Status == 1).Count(), pageSize, out rem);
 
             if (rem > 0)
             {
@@ -214,7 +234,7 @@ namespace AssetsApi.Controllers
                     id += "0";
                 }
                 id += next;
-                asset.AssetId = $"{its[0]}-{id}";
+                asset.AssetId = $"{id}";
             }
             else
             {
@@ -239,13 +259,14 @@ namespace AssetsApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Asset>> GetAsset(long id)
         {
-            var asset = _context.Assets.Include(x => x.Responsible)
+            var asset = _context.Assets
                 .Include(x => x.State)
                 .Include(x => x.Location)
                 .Include(x => x.AcquisitionMethod)
                 .Include(x => x.Depreciation)
-                .Include(x => x.Notes)
-                .Include(x => x.Provider)
+                .Include(x => x.Responsible)
+                .Include(x => x.Depreciation)
+                .Include(x=> x.Provider)
                 .FirstOrDefault(x => x.Id == id);
 
 

@@ -17,8 +17,8 @@ namespace AssetsApi.Models
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
         public string MobileNumber { get; set; }
-        
         public int Type { get; set; }
+        public string Permissions { get; set; }
         public bool IsActive { get; set; }
 
 

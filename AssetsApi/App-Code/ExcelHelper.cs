@@ -53,7 +53,8 @@ namespace AssetsApi.App_Code
         private static string getPath()
         {
             var p = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            string path = Path.Combine(p.Substring(0,p.IndexOf("bin")), "App-Code");
+            //string path = Path.Combine(p.Substring(0,p.IndexOf("bin")), "App-Code");
+            string path = Path.Combine(p, "App-Code");
 
             if (!Directory.Exists(path))
             {
@@ -88,7 +89,6 @@ namespace AssetsApi.App_Code
             }
             app.Save();
             app.Close();
-            File.Delete(path);
             return path;
         }
 

@@ -15,7 +15,7 @@ namespace AssetsApi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.3")
+                .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -92,8 +92,14 @@ namespace AssetsApi.Migrations
                     b.Property<long?>("ProviderID")
                         .HasColumnType("bigint");
 
+                    b.Property<DateTime>("PurchaseDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<double>("PurchasePrice")
                         .HasColumnType("float");
+
+                    b.Property<int?>("Responsible2ID")
+                        .HasColumnType("int");
 
                     b.Property<int?>("ResponsibleID")
                         .HasColumnType("int");
@@ -121,6 +127,8 @@ namespace AssetsApi.Migrations
                     b.HasIndex("LocationID");
 
                     b.HasIndex("ProviderID");
+
+                    b.HasIndex("Responsible2ID");
 
                     b.HasIndex("ResponsibleID");
 
@@ -166,7 +174,19 @@ namespace AssetsApi.Migrations
                     b.Property<long?>("AssetId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("CreatedById")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image3")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
@@ -175,6 +195,8 @@ namespace AssetsApi.Migrations
                     b.HasKey("IdNote");
 
                     b.HasIndex("AssetId");
+
+                    b.HasIndex("CreatedById");
 
                     b.ToTable("AssetNotes");
                 });
@@ -189,7 +211,13 @@ namespace AssetsApi.Migrations
                     b.Property<int>("Assiento")
                         .HasColumnType("int");
 
+                    b.Property<string>("Circuito")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Currency")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Director")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Folio")
@@ -198,10 +226,19 @@ namespace AssetsApi.Migrations
                     b.Property<string>("IdPrefix")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("InstituteName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("InstitutionLogo")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ParentLogo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Supervisor")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Tomo")
@@ -282,10 +319,20 @@ namespace AssetsApi.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("Responsible1ID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Responsible2ID")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("Responsible1ID");
+
+                    b.HasIndex("Responsible2ID");
 
                     b.ToTable("Locations");
                 });
@@ -427,6 +474,9 @@ namespace AssetsApi.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Permissions")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -461,6 +511,10 @@ namespace AssetsApi.Migrations
                         .WithMany()
                         .HasForeignKey("ProviderID");
 
+                    b.HasOne("AssetsApi.Models.Person", "Responsible2")
+                        .WithMany()
+                        .HasForeignKey("Responsible2ID");
+
                     b.HasOne("AssetsApi.Models.Person", "Responsible")
                         .WithMany()
                         .HasForeignKey("ResponsibleID");
@@ -473,8 +527,23 @@ namespace AssetsApi.Migrations
             modelBuilder.Entity("AssetsApi.Models.AssetNotes", b =>
                 {
                     b.HasOne("AssetsApi.Models.Asset", "Asset")
-                        .WithMany("Notes")
+                        .WithMany()
                         .HasForeignKey("AssetId");
+
+                    b.HasOne("AssetsApi.Models.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+                });
+
+            modelBuilder.Entity("AssetsApi.Models.Location", b =>
+                {
+                    b.HasOne("AssetsApi.Models.Person", "Responsible1")
+                        .WithMany()
+                        .HasForeignKey("Responsible1ID");
+
+                    b.HasOne("AssetsApi.Models.Person", "Responsible2")
+                        .WithMany()
+                        .HasForeignKey("Responsible2ID");
                 });
 #pragma warning restore 612, 618
         }

@@ -26,14 +26,14 @@ namespace AssetsApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AssetNotes>>> GetAssetNotes()
         {
-            return await _context.AssetNotes.ToListAsync();
+            return await _context.AssetNotes.Include(x=> x.CreatedBy).ToListAsync();
         }
 
         // GET: api/AssetNotes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<AssetNotes>> GetAssetNotes(long id)
+        public async Task<ActionResult<List<AssetNotes>>> GetAssetNotes(long id)
         {
-            var assetNotes = await _context.AssetNotes.FindAsync(id);
+            var assetNotes = await _context.AssetNotes.Include(x=> x.CreatedBy).Where(x => x.Asset.Id == id).ToListAsync();
 
             if (assetNotes == null)
             {
@@ -81,6 +81,11 @@ namespace AssetsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<AssetNotes>> PostAssetNotes(AssetNotes assetNotes)
         {
+
+            assetNotes.Asset = _context.Assets.First<Asset>(x => x.AssetId == assetNotes.Asset.AssetId);
+            assetNotes.CreatedBy = _context.Users.First<User>(x => x.Id == assetNotes.CreatedBy.Id);
+
+            assetNotes.CreationDate = DateTime.UtcNow;
             _context.AssetNotes.Add(assetNotes);
             await _context.SaveChangesAsync();
 

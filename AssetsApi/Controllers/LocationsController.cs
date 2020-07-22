@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Cors;
 
 namespace AssetsApi.Controllers
 {
-    [Route("[controller]")]
     [ApiController]
+    [Route("[controller]")]
     [EnableCors("Allow")]
     public class LocationsController : ControllerBase
     {
@@ -26,14 +26,20 @@ namespace AssetsApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Location>>> GetLocations()
         {
-            return await _context.Locations.Where(x=> x.Status == 1).ToListAsync();
+            return await _context.Locations
+                .Include(x => x.Responsible1)
+                .Include(x => x.Responsible2)
+                .Where(x=> x.Status == 1).ToListAsync();
         }
 
         // GET: api/Locations/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Location>> GetLocation(int id)
         {
-            var location = await _context.Locations.FindAsync(id);
+            var location = await _context.Locations
+                .Include(x => x.Responsible1)
+                .Include(x => x.Responsible2)
+                .FirstOrDefaultAsync(x=> x.ID == id);
 
             if (location == null)
             {
@@ -41,6 +47,22 @@ namespace AssetsApi.Controllers
             }
 
             return location;
+        }
+
+        private void setReponsibleByLocation(Location location, bool one = true, bool two = true) {
+            var assets = _context.Assets
+                .Include(x => x.Responsible)
+                .Include(x => x.Responsible2)
+                .Include(x=> x.Location)
+                .Where(x => x.Location.ID == location.ID && x.Status == 1).ToList();
+            foreach (var asset in assets)
+            {
+                if(one)
+                asset.Responsible = location.Responsible1;
+                if(two)
+                asset.Responsible2 = location.Responsible2;
+            }
+            _context.SaveChanges();
         }
 
         // PUT: api/Locations/5
@@ -54,7 +76,25 @@ namespace AssetsApi.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(location).State = EntityState.Modified;
+            var _old = _context.Locations.FirstOrDefault(x => x.ID == id);
+            if (_old.Responsible1 == null && _old.Responsible2 == null)
+            {
+                setReponsibleByLocation(location);
+            }
+            else if (_old.Responsible1.ID != location.Responsible1.ID && _old.Responsible2.ID != location.Responsible1.ID
+                && _old.Responsible1.ID != location.Responsible2.ID && _old.Responsible2.ID != location.Responsible2.ID)
+            {
+                setReponsibleByLocation(location);
+            }
+            else if (_old.Responsible1.ID != location.Responsible1.ID && _old.Responsible1.ID != location.Responsible2.ID) {
+                setReponsibleByLocation(location, true, false);
+            }
+            else if (_old.Responsible2.ID != location.Responsible1.ID && _old.Responsible2.ID != location.Responsible2.ID)
+            {
+                setReponsibleByLocation(location, false, true);
+            }
+            _old.Responsible1 = location.Responsible1;
+            _old.Responsible2 = location.Responsible2;
 
             try
             {

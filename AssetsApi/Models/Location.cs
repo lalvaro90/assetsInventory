@@ -12,8 +12,8 @@ namespace AssetsApi.Models
         public string Name { get; set; }
         public string Details { get; set; }
         public int Status { get; set; }
-        //public Person Responsible1 {get;set; }
-        //public Person Responsible2 { get; set; }
+        public Person Responsible1 { get; set; }
+        public Person Responsible2 { get; set; }
         public override string ToString()
         {
             var props = typeof(Location).GetProperties();

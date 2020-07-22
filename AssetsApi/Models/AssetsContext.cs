@@ -55,6 +55,8 @@ namespace AssetsApi.Models
             modelBuilder.Entity<Location>(entity =>
             {
                 entity.HasKey(e => e.ID);
+                entity.HasOne(e => e.Responsible1);
+                entity.HasOne(e => e.Responsible2);
             });
 
             modelBuilder.Entity<States>(entity =>
@@ -87,7 +89,6 @@ namespace AssetsApi.Models
                 entity.HasOne(e => e.State);
                 entity.HasOne(e => e.Responsible);
                 entity.HasOne(e => e.Location);
-                entity.HasMany(e => e.Notes);
                 entity.HasOne(e => e.Provider);
             });
 
