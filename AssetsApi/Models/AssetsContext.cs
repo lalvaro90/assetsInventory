@@ -49,7 +49,7 @@ namespace AssetsApi.Models
 
             modelBuilder.Entity<Person>(entity => {
                 entity.HasKey(e => e.ID);
-                entity.HasAlternateKey(e => e.Email);
+                entity.HasIndex(e => e.Email).IsUnique();
             });
 
             modelBuilder.Entity<Location>(entity =>

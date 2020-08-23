@@ -55,6 +55,8 @@ namespace AssetsApi.Controllers
                 var tk = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(
                                 string.Format("{0}:{1}:{2}:{3}", user.Id, ip, client,DateTime.Now)));
                 var token = new Token() { Content = tk, IsActive = true, Created = DateTime.Now, Expire = DateTime.Now.AddMinutes(30), Type = _user.Type };
+                _user.LastLogin = DateTime.UtcNow;
+                _context.Entry(_user).State = EntityState.Modified;
                 _context.Tokens.Add(token);
                 _context.SaveChanges();
                 _user.Token = token.Content;

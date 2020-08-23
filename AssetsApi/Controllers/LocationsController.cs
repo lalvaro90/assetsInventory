@@ -51,8 +51,8 @@ namespace AssetsApi.Controllers
 
         private void setReponsibleByLocation(Location location, bool one = true, bool two = true) {
             var assets = _context.Assets
-                .Include(x => x.Responsible)
-                .Include(x => x.Responsible2)
+                .Include(x => x.Responsible).AsNoTracking()
+                .Include(x => x.Responsible2).AsNoTracking()
                 .Include(x=> x.Location)
                 .Where(x => x.Location.ID == location.ID && x.Status == 1).ToList();
             foreach (var asset in assets)
@@ -61,6 +61,7 @@ namespace AssetsApi.Controllers
                 asset.Responsible = location.Responsible1;
                 if(two)
                 asset.Responsible2 = location.Responsible2;
+                _context.Entry(asset).State = EntityState.Modified;
             }
             _context.SaveChanges();
         }
@@ -95,6 +96,8 @@ namespace AssetsApi.Controllers
             }
             _old.Responsible1 = location.Responsible1;
             _old.Responsible2 = location.Responsible2;
+
+            _context.Entry(_old).State = EntityState.Modified;
 
             try
             {

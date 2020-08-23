@@ -15,6 +15,7 @@ using AssetsApi.App_Code;
 using System.Net.Http.Headers;
 using Microsoft.Extensions.FileProviders;
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
 
 namespace AssetsApi.Controllers
 {
@@ -25,9 +26,13 @@ namespace AssetsApi.Controllers
     {
         private readonly AssetsContext _context;
 
-        public AssetsController(AssetsContext context)
+        public AssetsController(AssetsContext context, IConfiguration iConfig)
         {
-            _context = context;
+            //_context = context;
+
+            var optionsBuilder = new DbContextOptionsBuilder<AssetsContext>();
+            optionsBuilder.UseSqlServer(iConfig.GetConnectionString("DefaultConnection"));
+            _context = new AssetsContext(optionsBuilder.Options);
         }
 
         // GET: api/Assets
@@ -213,11 +218,11 @@ namespace AssetsApi.Controllers
 
 
         // GET: api/Assets
-        [HttpGet("{index}/{itemId}/{next}")]
-        public Asset GetNextId(int index, int itemId, int next)
+        [HttpGet("NextId")]
+        public Asset GetNextId()
         {
             var asset = _context.Assets.OrderBy(x => x.AssetId).Last();
-            next = 0;
+            var next = 0;
             string id = "";
             var ceros = 0;
             if (asset.AssetId.Contains("-"))
