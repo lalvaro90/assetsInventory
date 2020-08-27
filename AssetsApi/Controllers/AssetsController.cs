@@ -146,9 +146,9 @@ namespace AssetsApi.Controllers
 
                     if (!string.IsNullOrEmpty(a.Depreciation.Frequency))
                     {
-                        if (a.CurrentPrice > 0 || a.PurchaseDate < a.PurchaseDate.AddYears(int.Parse(a.Depreciation.Frequency)))
+                        if (a.CurrentPrice > 0 || a.AcquisitionDate < a.AcquisitionDate.AddYears(int.Parse(a.Depreciation.Frequency)))
                         {
-                            var diff = (DateTime.Now - a.PurchaseDate).TotalDays;
+                            var diff = (DateTime.Now - a.AcquisitionDate).TotalDays;
                             var daily = a.Depreciation.Percentage / 30;
                             a.CurrentPrice = a.PurchasePrice - (a.PurchasePrice * ((daily * diff) / 100));
                             _context.Entry(a).State = EntityState.Modified;

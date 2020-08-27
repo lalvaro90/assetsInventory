@@ -116,6 +116,7 @@ namespace AssetsApi.Controllers
         public async Task<ActionResult<User>> PostUser(User user)
         {
             user.IsActive = true;
+            user.Permissions = "asset_view";
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 

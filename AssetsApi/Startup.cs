@@ -79,6 +79,10 @@ namespace AssetsApi
                             await httpContext.Response.WriteAsync("Unautorized Request");
                         }
                     }
+                    else if (httpContext.Request.Path.Value.Contains("configurations"))
+                    {
+                        await next.Invoke();
+                    }
                     else if (httpContext.Request.Path.Value.Contains("users") && httpContext.Request.Method == HttpMethods.Post)
                     {
                         await next.Invoke();
