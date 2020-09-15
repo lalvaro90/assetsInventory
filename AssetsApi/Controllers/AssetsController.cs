@@ -16,6 +16,7 @@ using System.Net.Http.Headers;
 using Microsoft.Extensions.FileProviders;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 
 namespace AssetsApi.Controllers
 {
@@ -81,11 +82,18 @@ namespace AssetsApi.Controllers
         [HttpGet("{index}/{pageSize}")]
         public IPagedList<Asset> GetAssets(int index, int pageSize)
         {
-            return _context.Assets
-                .Where(x =>  x.Status == 1)
-                .OrderBy(x => x.Location.ID)
-                .ThenBy(x => x.AssetId)
-                .ToPagedList(index, pageSize);
+            try
+            {
+                return _context.Assets
+                    .Where(x => x.Status == 1)
+                    .OrderBy(x => x.Location.ID)
+                    .ThenBy(x => x.AssetId)
+                    .ToPagedList(index, pageSize);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
 

@@ -13,6 +13,9 @@
         "packagesPath": "C:\\Users\\ff_luism\\.nuget\\packages\\",
         "outputPath": "D:\\AssetApp\\assetsInventory\\AssetsApi\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
           "C:\\Users\\ff_luism\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"

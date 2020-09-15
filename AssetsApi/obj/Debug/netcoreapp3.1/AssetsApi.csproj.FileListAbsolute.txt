@@ -439,4 +439,3 @@ D:\AssetApp\assetsInventory\AssetsApi\bin\Debug\netcoreapp3.1\System.IO.Packagin
 D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.genruntimeconfig.cache
 D:\AssetApp\assetsInventory\AssetsApi\bin\Debug\netcoreapp3.1\App-Code\report.xlsx
 D:\AssetApp\assetsInventory\AssetsApi\bin\Debug\netcoreapp3.1\App-Code\Reporte.xlsx
-D:\AssetApp\assetsInventory\AssetsApi\obj\Debug\netcoreapp3.1\AssetsApi.csproj.CoreCompileInputs.cache

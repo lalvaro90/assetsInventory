@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AssetsApi.Models;
@@ -51,26 +52,43 @@ namespace AssetsApi
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseDeveloperExceptionPage();
 
             var scope = app.ApplicationServices.CreateScope();
             var context = scope.ServiceProvider.GetService<AssetsContext>();
-            context.Database.EnsureCreated();
-            context.Database.Migrate();
+            //if(!context.Database.EnsureCreated())
+            //    context.Database.Migrate();
 
             app.Use(async delegate (HttpContext httpContext, Func<Task> next)
             {
-                var headers = httpContext.Request.Headers;
-                if (headers.Keys.Contains("token"))
+                try
                 {
-                    var tokenValue = headers["token"].FirstOrDefault();
-                    Token tk = context.Tokens.FirstOrDefault(t => t.Content == tokenValue);
-                    if (tk != null)
+                    var headers = httpContext.Request.Headers;
+                    if (headers.Keys.Contains("token"))
                     {
-
-                        if (tk.Expire > DateTime.Now)
+                        var tokenValue = headers["token"].FirstOrDefault();
+                        Token tk = context.Tokens.FirstOrDefault(t => t.Content == tokenValue);
+                        if (tk != null)
                         {
-                            tk.Expire.AddMinutes(15);
-                            await context.SaveChangesAsync();
+
+                            if (tk.Expire > DateTime.Now)
+                            {
+                                tk.Expire.AddMinutes(15);
+                                await context.SaveChangesAsync();
+                                await next.Invoke();
+                            }
+                            else
+                            {
+                                httpContext.Response.StatusCode = 401;
+                                await httpContext.Response.WriteAsync("Unautorized Request");
+                            }
+                        }
+                        else if (httpContext.Request.Path.Value.Contains("configurations"))
+                        {
+                            await next.Invoke();
+                        }
+                        else if (httpContext.Request.Path.Value.Contains("users") && httpContext.Request.Method == HttpMethods.Post)
+                        {
                             await next.Invoke();
                         }
                         else
@@ -78,12 +96,13 @@ namespace AssetsApi
                             httpContext.Response.StatusCode = 401;
                             await httpContext.Response.WriteAsync("Unautorized Request");
                         }
+
                     }
-                    else if (httpContext.Request.Path.Value.Contains("configurations"))
+                    else if (httpContext.Request.Path.Value.Contains("users") && httpContext.Request.Method == HttpMethods.Post)
                     {
                         await next.Invoke();
                     }
-                    else if (httpContext.Request.Path.Value.Contains("users") && httpContext.Request.Method == HttpMethods.Post)
+                    else if (httpContext.Request.Path.Value.Contains("export") && httpContext.Request.Method == HttpMethods.Get)
                     {
                         await next.Invoke();
                     }
@@ -92,19 +111,11 @@ namespace AssetsApi
                         httpContext.Response.StatusCode = 401;
                         await httpContext.Response.WriteAsync("Unautorized Request");
                     }
+                }
+                catch (Exception ex)
+                {
 
-                }
-                else if (httpContext.Request.Path.Value.Contains("users") && httpContext.Request.Method == HttpMethods.Post)
-                {
-                    await next.Invoke();
-                }
-                else if (httpContext.Request.Path.Value.Contains("export") && httpContext.Request.Method == HttpMethods.Get) {
-                    await next.Invoke();
-                }
-                else
-                {
-                    httpContext.Response.StatusCode = 401;
-                    await httpContext.Response.WriteAsync("Unautorized Request");
+                    throw;
                 }
                 //await next.Invoke();
             });
