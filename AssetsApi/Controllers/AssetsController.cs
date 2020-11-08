@@ -48,10 +48,26 @@ namespace AssetsApi.Controllers
                 .Include(x => x.Responsible)
                 .Include(x => x.Depreciation)
                 .Where(x => x.Status == 1)
-                .OrderBy(x => x.Location.ID)
-                .ThenBy(x => x.AssetId)
+                .OrderBy(x => x.AssetId)
                 .ToListAsync();
         }
+
+        // GET: api/Assets
+        [HttpGet("deleted")]
+        public async Task<ActionResult<IEnumerable<Asset>>> GetDeletedAssets()
+        {
+            return await _context.Assets
+                .Include(x => x.State)
+                .Include(x => x.Location)
+                .Include(x => x.AcquisitionMethod)
+                .Include(x => x.Depreciation)
+                .Include(x => x.Responsible)
+                .Include(x => x.Depreciation)
+                .Where(x => x.Status == 0)
+                .OrderBy(x => x.AssetId)
+                .ToListAsync();
+        }
+
 
         [HttpGet("location/{location}")]
         public async Task<ActionResult<IEnumerable<Asset>>> GetAssetsByLocation(int location)
@@ -62,8 +78,7 @@ namespace AssetsApi.Controllers
                 .Include(x => x.Responsible)
                 .Include(x => x.Responsible2)
                 .Where(x => x.Location.ID == location && x.Status == 1)
-                .OrderBy(x => x.Location.Name)
-                .ThenBy(x => x.AssetId)
+                .OrderBy(x => x.AssetId)
                 .ToListAsync();
         }
 
@@ -97,50 +112,86 @@ namespace AssetsApi.Controllers
         }
 
 
-        [HttpGet("export/{token}")]
-        public async Task<FileContentResult> ExportMainReport(string token)
+        [HttpGet("export/{type}")]
+        public async Task<FileContentResult> ExportMainReport(string type)
         {
             var path = "";
             try
             {
                 var helper = new ExcelHelper();
 
-                var assets = _context.Assets
+                List<Asset> assets = null;
+                switch (type) {
+                    default:
+                    case "general":
+                        assets = _context.Assets
                     .Include(x => x.Location)
                     .Include(x => x.AcquisitionMethod)
                     .Include(x => x.State)
                     .Where(x => x.Status == 1)
-                    .OrderBy(x => x.Location)
-                    .ThenBy(x => x.Tomo)
-                    .ThenBy(x => x.Folio)
-                    .ThenBy(x => x.Folio)
                     .ToList();
+                        break;
+                    case "deleted":
+                        assets = _context.Assets
+                    .Include(x => x.Location)
+                    .Include(x => x.AcquisitionMethod)
+                    .Include(x => x.State)
+                    .Where(x => x.Status == 0)
+                    .ToList();
+                        break;
+                    case "all":
+                        assets = _context.Assets
+                        .Include(x => x.Location)
+                        .Include(x => x.AcquisitionMethod)
+                        .Include(x => x.State)
+                        .Where(x => x.Status == 1)
+                        .ToList();
 
-                path = helper.ExportData(assets);
+                        assets.AddRange( _context.Assets
+                        .Include(x => x.Location)
+                        .Include(x => x.AcquisitionMethod)
+                        .Include(x => x.State)
+                        .Where(x => x.Status == 0)
+                        .ToList());
 
-                var date = DateTime.Now.ToString().Replace('\\', '-');
+                        break;
 
-                Response.ContentType = "application/ms-excel";
-                Response.HttpContext.Response.Headers.Append("Content-Disposition", "attachment");
+                }
 
-                var file = System.IO.File.ReadAllBytes(path);
-
-                var fs = System.IO.File.OpenRead(path);
-
-                MemoryStream ms = new MemoryStream();
-                fs.CopyTo(ms);
-
-                var b = ms.ToArray();
-
-                return new FileContentResult(b, "application/ms-excel")
+                if (assets != null)
                 {
-                    FileDownloadName = $"Reporte de Activos {date}.xlsx"
-                };
+                    path = helper.ExportData(assets);
+
+                    var date = DateTime.Now.ToString().Replace('\\', '-');
+
+                    Response.ContentType = "application/ms-excel";
+                    Response.HttpContext.Response.Headers.Append("Content-Disposition", "attachment");
+
+                    var file = System.IO.File.ReadAllBytes(path);
+
+                    var fs = System.IO.File.OpenRead(path);
+
+                    MemoryStream ms = new MemoryStream();
+                    fs.CopyTo(ms);
+
+                    var b = ms.ToArray();
+                    fs.Close();
+                    ms.Close();
+
+                    return new FileContentResult(b, "application/ms-excel")
+                    {
+                        FileDownloadName = $"Reporte de Activos {date}.xlsx"
+                    };
+                }
+                else {
+
+                    throw new Exception("Error - No data to export");
+                }
             }
             catch (Exception ex)
             {
-                Response.WriteAsync($"Error - {ex.Message}<br>");
-                Response.WriteAsync($"Stack - {ex.StackTrace}<br>");
+                _ = Response.WriteAsync($"Error - {ex.Message}<br>");
+                _ = Response.WriteAsync($"Stack - {ex.StackTrace}<br>");
                 throw;
             }
         }
@@ -199,8 +250,7 @@ namespace AssetsApi.Controllers
             int maxAsiento = 24;
             var assets = _context.Assets.Include(x => x.Location)
                 .Where(x => x.Status == 1)
-                .OrderBy(x => x.Location.ID)
-                .ThenBy(x => x.AssetId)
+                .OrderBy(x => x.AssetId)
                 .ToList();
             foreach (var a in assets)
             {

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "4Z0lpfhey5IhLbBCERf4FmeK0H519jw2N9LQ0pYf15yx3QTvRI65/qZ3Sg+u/sc8x357TzrB+UZn0OrMQYM8Xw==",
+  "dgSpecHash": "gtoka+jrejYG8oHf1PW7zwhGUHdqY9lg2SByNNZ0/kPpenkry4QQqlyXzvEI1Wqu+SCuDQxZQ2gLJ2U15eDX2g==",
   "success": true,
-  "projectFilePath": "D:\\AssetApp\\assetsInventory\\AssetsApi\\AssetsApi.csproj",
+  "projectFilePath": "E:\\GitHub\\assetsInventory\\AssetsApi\\AssetsApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ff_luism\\.nuget\\packages\\documentformat.openxml\\2.11.0\\documentformat.openxml.2.11.0.nupkg.sha512",
     "C:\\Users\\ff_luism\\.nuget\\packages\\microsoft.aspnetcore.cors\\2.2.0\\microsoft.aspnetcore.cors.2.2.0.nupkg.sha512",

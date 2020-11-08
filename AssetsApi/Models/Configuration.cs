@@ -20,6 +20,10 @@ namespace AssetsApi.Models
         public int Tomo { get; set; } // un unico tomo
         public int Folio { get; set; } //max 500 por tomo 
         public int Assiento { get; set; } // max 24 por folio
+        public bool ShowReportsHeader { get; set; }
+        public bool ShowReportsFooter { get; set; }
+        public bool ShowBookAssignation { get; set; }
+
         public DateTime ValidUntil { get; set; }
 
     }
