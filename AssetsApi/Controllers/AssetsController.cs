@@ -90,6 +90,7 @@ namespace AssetsApi.Controllers
                 .Include(x => x.State)
                 .Include(x => x.Responsible)
                 .Include(x => x.Responsible2)
+                .OrderBy(x => x.AssetId)
                 .Where(x => (x.Responsible.ID == person || x.Responsible2.ID == person) && x.Status == 1).OrderBy(x => x.Responsible.LastName).ToListAsync();
         }
 
@@ -101,8 +102,7 @@ namespace AssetsApi.Controllers
             {
                 return _context.Assets
                     .Where(x => x.Status == 1)
-                    .OrderBy(x => x.Location.ID)
-                    .ThenBy(x => x.AssetId)
+                    .OrderBy(x => x.AssetId)
                     .ToPagedList(index, pageSize);
             }
             catch (Exception ex)
@@ -121,36 +121,41 @@ namespace AssetsApi.Controllers
                 var helper = new ExcelHelper();
 
                 List<Asset> assets = null;
-                switch (type) {
+                switch (type)
+                {
                     default:
                     case "general":
                         assets = _context.Assets
-                    .Include(x => x.Location)
-                    .Include(x => x.AcquisitionMethod)
-                    .Include(x => x.State)
-                    .Where(x => x.Status == 1)
-                    .ToList();
+                        .Include(x => x.Location)
+                        .Include(x => x.AcquisitionMethod)
+                        .Include(x => x.State)
+                        .OrderBy(x => x.AssetId)
+                        .Where(x => x.Status == 1)
+                        .ToList();
                         break;
                     case "deleted":
                         assets = _context.Assets
-                    .Include(x => x.Location)
-                    .Include(x => x.AcquisitionMethod)
-                    .Include(x => x.State)
-                    .Where(x => x.Status == 0)
-                    .ToList();
+                        .Include(x => x.Location)
+                        .Include(x => x.AcquisitionMethod)
+                        .Include(x => x.State)
+                        .OrderBy(x => x.AssetId)
+                        .Where(x => x.Status == 0)
+                        .ToList();
                         break;
                     case "all":
                         assets = _context.Assets
                         .Include(x => x.Location)
                         .Include(x => x.AcquisitionMethod)
                         .Include(x => x.State)
+                        .OrderBy(x => x.AssetId)
                         .Where(x => x.Status == 1)
                         .ToList();
 
-                        assets.AddRange( _context.Assets
+                        assets.AddRange(_context.Assets
                         .Include(x => x.Location)
                         .Include(x => x.AcquisitionMethod)
                         .Include(x => x.State)
+                        .OrderBy(x => x.AssetId)
                         .Where(x => x.Status == 0)
                         .ToList());
 
@@ -183,7 +188,8 @@ namespace AssetsApi.Controllers
                         FileDownloadName = $"Reporte de Activos {date}.xlsx"
                     };
                 }
-                else {
+                else
+                {
 
                     throw new Exception("Error - No data to export");
                 }
@@ -197,11 +203,13 @@ namespace AssetsApi.Controllers
         }
 
         [HttpGet("depreciation")]
-        public void updateDepreciation() {
+        public void updateDepreciation()
+        {
             try
             {
-               var assets = _context.Assets.Include(x => x.Depreciation).Where(x => x.Status == 1);
-                foreach (Asset a in assets) {
+                var assets = _context.Assets.Include(x => x.Depreciation).Where(x => x.Status == 1);
+                foreach (Asset a in assets)
+                {
 
                     if (!string.IsNullOrEmpty(a.Depreciation.Frequency))
                     {
@@ -329,7 +337,7 @@ namespace AssetsApi.Controllers
                 .Include(x => x.Depreciation)
                 .Include(x => x.Responsible)
                 .Include(x => x.Depreciation)
-                .Include(x=> x.Provider)
+                .Include(x => x.Provider)
                 .FirstOrDefault(x => x.Id == id);
 
 
@@ -430,15 +438,23 @@ namespace AssetsApi.Controllers
         {
             try
             {
+                var acq = _context.AcquisitionMethods.FirstOrDefault(x => x.ID == asset.AcquisitionMethod.ID);
+                var loc = _context.Locations.FirstOrDefault(x => x.ID == asset.Location.ID);
+                var sta = _context.States.FirstOrDefault(x => x.ID == asset.State.ID);
+                var dep = _context.Depreciations.FirstOrDefault(x => x.Id == asset.Depreciation.Id);
+                var resp = _context.Persons.FirstOrDefault(x => x.ID == asset.Responsible.ID);
+                var prov = _context.Providers.FirstOrDefault(x => x.ID == asset.Provider.ID);
                 asset.Status = 1; //Active
-                asset.AcquisitionMethod = _context.AcquisitionMethods.FirstOrDefault(it => it.ID == asset.AcquisitionMethod.ID);
-                asset.Location = _context.Locations.FirstOrDefault(it => it.ID == asset.Location.ID);
-                asset.State = _context.States.FirstOrDefault(it => it.ID == asset.State.ID);
-                asset.Depreciation = _context.Depreciations.FirstOrDefault(it => it.Id == asset.Depreciation.Id);
-                asset.Responsible = _context.Persons.FirstOrDefault(it => it.ID == asset.Responsible.ID);
-                asset.Provider = _context.Providers.FirstOrDefault(it => it.ID == asset.Provider.ID);
+                asset.AcquisitionMethod = acq;
+                asset.Location = loc;
+                asset.State = sta;
+                asset.Depreciation = dep;
+                asset.Responsible = resp;
+                asset.Provider = prov;
+                asset.LastUpdated = DateTime.Now;
+                asset.PurchaseDate = DateTime.Now;
+                asset.AcquisitionDate = asset.AcquisitionDate != null ? asset.AcquisitionDate.ToUniversalTime() : DateTime.Now;
                 _context.Assets.Add(asset);
-                await _context.SaveChangesAsync();
 
                 _context.AssetsHistory.Add(new AssetHistory()
                 { AssetID = asset.Id, NewDetails = asset.ToString(), PreviewsDetails = "Asset Creation", UpdateDate = DateTime.Now, Action = "Asset Creation" });

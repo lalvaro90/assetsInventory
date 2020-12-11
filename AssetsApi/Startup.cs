@@ -53,6 +53,7 @@ namespace AssetsApi
                 app.UseDeveloperExceptionPage();
             }
             app.UseDeveloperExceptionPage();
+  
 
             var scope = app.ApplicationServices.CreateScope();
             var context = scope.ServiceProvider.GetService<AssetsContext>();
